@@ -67,48 +67,76 @@
 			var date = year+"-"+month+"-"+day;
 			var km = $('#km').val();
 			var time = $('#time').val();
+			var notes = $('#notes').val();
 			if (km==""){
 				$('#km').parent().addClass("error");
+				$('#km').siblings('i').removeClass("hide");
 				error++;
 			}
 			else if ($('#km').parent().hasClass("error")){
 				$('#km').parent().removeClass("error");
+				$('#km').siblings('i').addClass("hide");
 				error--;
 			}
 			if (time==""){
 				$('#time').parent().addClass("error");
+				$('#time').siblings('i').removeClass("hide");
 				error++;
 			}
 			else if ($('#time').parent().hasClass("error")){
 				$('#time').parent().removeClass("error");
+				$('#time').siblings('i').addClass("hide");
 				error--;
 			}
 			if(error==0){
+				$("#insert .insert-form").slideUp();
 				$("#insert button").button('loading');
+				$("#insert .progress").show();
 				$.ajax({
-					url: "includes/insertdb.php",
+					url: "includes/ajax.php",
 					type: "POST",
-					data: "date="+date+"&km="+km+"&time="+time,
+					data: "a=insert&date="+date+"&km="+km+"&time="+time+"&notes="+notes,
 					success: function(html){
+						$("#insert .progress").hide();
+						$("#insert button").hide();
 						console.log(html)
 						if(html=="1"){
 							$("#insert-success").show();
 							$("#insert button").button('reset');
 						}
 						else {
-							$("#insert-error").show();						
+							$("#insert-error").show();
+							$("#insert button").button('reset');					
 						}
 					}
 				});
 			}
 		};
+		
+		function insert_new(){
+			$(".alert").hide();
+			$("#insert .insert-form").slideDown();
+			$("#insert button").show();
+		}
 			
 		function char_remain(){
 			var length = $("#notes").val().length;
 			var remain = 120 - length;
-			console.log(length+" - "+remain);
 			$("#char_remain").text(remain);
 		}
+		
+		function sort_log(order){
+			console.log(order);
+			$.ajax({
+				url: "includes/ajax.php",
+				type: "POST",
+				data: "a=sort_log&order="+order,
+				success: function(html){
+					console.log(html)
+				}
+			});
+		}
+		
 	</script>
   </head>
 
@@ -157,6 +185,12 @@
 	<script src="assets/js/jquery.numeric.js"></script>
 	<script>
 		$("#km, #time").numeric();
+		// $("i.info").popover({
+		// 	placement: 'left'
+		// });
+		$("i.info").tooltip({
+			placement: 'left'
+		});
 	</script>
   </body>
 </html>

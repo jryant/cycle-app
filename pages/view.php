@@ -8,29 +8,31 @@
 	}
 
 	function table_head(){
-		echo "<table class=\"table table-striped table-bordered\">\n\t<thead>\n\t\t<tr>
+		echo "<table id=\"log\" class=\"table table-striped table-bordered\">\n\t<thead>\n\t\t<tr>
 			<!-- <th>#</th> -->
-			<th>Date</th>
+			<th>Date</a> <i class=\"icon-chevron-down\"></th>
 			<th>Distance</th>
 			<th>Time</th>
+			<th>Notes</th>
 		</tr>\n\t</thead>\n<tbody>\n";
+		// <a href=\"#\" onClick=\"sort_log('km');return false;\">
 	}
+	
 	function get_log(){
 		$query = "SELECT * FROM cycle_data ORDER BY date DESC";
 		$result = mysql_query($query) or die(mysql_error());
 		if (mysql_num_rows($result)>1){
 			table_head();
-			$i = 1;
 			while ($entry = mysql_fetch_array($result)){
 				$date = strftime("%a, %b %e",strtotime($entry['date']));
-				// $time = format_time($entry['time']);
-				// echo "<tr>\n\t<td>".$i."</td>\n\t";
 				echo "<tr>\n\t";
 				echo "<td>".$date."</td>\n\t";
 				echo "<td>".$entry['km']." km</td>\n\t";
 				echo "<td>".format_time($entry['time'])."</td>\n";
+				// echo ($entry['notes']) ? "<td><i class=\"icon-list-alt info\" rel=\"popover\" data-content=\"".$entry['notes']."\" data-original-title=\"Ride Notes\"></i></td>\n\t" : "<td>&nbsp;</td>\n\t" ;
+				echo ($entry['notes']) ? "<td><i class=\"icon-list-alt info\" rel=\"tooltip\" title=\"".$entry['notes']."\"></i></td>\n\t" : "<td>&nbsp;</td>\n\t" ;
+
 				echo "</tr>";
-				$i++;
 			}
 			echo "\t</tbody>\n</table>";
 		}
@@ -51,6 +53,7 @@
 				echo "<td>".$date."</td>\n\t";
 				echo "<td>".$entry['km']." km</td>\n\t";
 				echo "<td>".format_time($entry['time'])."</td>\n";
+				echo "<td>".$entry['notes']."</td>\n\t";
 				echo "</tr>\n\t</tbody>\n</table>";
 				break;
 			case 'number':
@@ -72,14 +75,13 @@
 		$result = mysql_query($query) or die(mysql_error());
 		// echo mysql_num_rows($result);
 	}
-	
+		
 ?>
 <h1>View Logs</h1>
 
 <br/>
 
 <h3>Stats</h3>
-
 <ul>
 	<li>Total rides logged: <strong><?php count_entries(); ?></strong></li>
 	<li>Longest ride distance: <strong><?php get_longest_ride("km","number"); ?></strong></li>
