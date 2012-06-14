@@ -21,7 +21,7 @@
 	function get_log(){
 		$query = "SELECT * FROM cycle_data ORDER BY date DESC";
 		$result = mysql_query($query) or die(mysql_error());
-		if (mysql_num_rows($result)>1){
+		if (mysql_num_rows($result)>0){
 			table_head();
 			while ($entry = mysql_fetch_array($result)){
 				$date = strftime("%a, %b %e",strtotime($entry['date']));
